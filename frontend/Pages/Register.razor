@@ -1,0 +1,57 @@
+﻿@page "/register"
+
+@inject HttpClient client
+
+<PageTitle>Registro</PageTitle>
+
+<p>
+    <label>
+        Nome
+        <input @bind="name">
+    </label>
+</p>
+
+<p>
+    <label>
+        Email
+        <input type="email" @bind="email">
+    </label>
+</p>
+
+<p>
+    <label>
+        Senha
+        <input type="password" @bind="password">
+    </label>
+</p>
+
+<p>
+    <label>
+        Confirmar senha
+        <input type="password" @bind="passwordConfirm">
+    </label>
+</p>
+
+<button @onclick="TryRegister">Register</button>
+
+@code {
+    private string? name;
+    private string email;
+    private string? password;
+    private string passwordConfirm;
+    
+
+    async void TryRegister()
+    {
+        var response = await client.GetAsync($"user/{name}/{email}/{password}/{passwordConfirm}");
+
+        if(response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadFromJsonAsync<RegisterMessageResult>();
+            if (content.Status == "Sucesso")
+            {
+                content.Message = "Registrado com sucesso!";
+            }
+        }
+    }
+}

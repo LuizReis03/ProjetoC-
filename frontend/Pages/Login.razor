@@ -1,0 +1,42 @@
+﻿@page "/login"
+
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage sessionStorage
+@inject HttpClient client
+
+<PageTitle>Login</PageTitle>
+
+<p>
+    <label>
+        Login
+        <input @bind="login">
+    </label>
+</p>
+
+<p>
+    <label>
+        Senha
+        <input type="password" @bind="password">
+    </label>
+</p>
+
+<button @onclick="TryLogin">Login</button>
+
+@code {
+    private string? login;
+    private string? password;
+
+    async void TryLogin()
+    {
+        var response = await client.GetAsync($"user/{login}/{password}");
+
+        if(response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var content = await response.Content.ReadFromJsonAsync<LoginMessageResult>();
+            if (content.Status == "Sucesso")
+            {
+                await sessionStorage.SetAsync("token", content.Token);
+            }
+        }
+    }
+}
