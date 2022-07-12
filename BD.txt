@@ -1,0 +1,49 @@
+use master
+go
+
+if exists(select * from sys.databases where name = 'projetop')
+	drop database projetop
+go
+
+create database projetop
+go
+
+use projetop
+go
+
+create table Usuario(
+	ID int identity primary key,
+	Nome varchar(100) not null,
+	Email varchar(100) not null,
+	Senha varchar(MAX) not null
+);
+go
+
+create table Token(
+	ID int identity primary key,
+	Chave varchar(MAX) not null,
+	Usuario int references Usuario(ID)
+);
+go
+
+create table Amizade(
+	ID int identity primary key,
+	Usuario1 int references Usuario(ID),
+	Usuario2 int references Usuario(ID)
+);
+go
+
+create table Post(
+	ID int identity primary key,
+	Usuario int references Usuario(ID),
+	Mensagem varchar(MAX) not null,
+	Momento datetime not null
+);
+go
+
+INSERT INTO Usuario (Nome, Email, Senha) VALUES ('Thiago', 'thiago@email.com', 1234);
+INSERT INTO Usuario (Nome, Email, Senha) VALUES ('Eggs', 'ovos@email.com', 56789);
+
+insert Usuario (Senha, Email, Nome) values (1234, 'thiago@email.com', 'Thiago');
+
+select * from Amizade
